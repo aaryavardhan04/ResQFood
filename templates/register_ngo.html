@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white/10  border-t-4 border-b-4 border-r-4 border-l-4 rounded-xl border-black/60 p-8 my-10">
+    <h2 class="text-2xl font-bold mb-2 text-center">Register Your NGO</h2>
+    <p class="text-center text-sm opacity-100 mb-6">Create an organization profile for your volunteers</p>
+    <form method="POST" class="space-y-4">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="NGO Name" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
+        <input type="text" name="ngo_id" placeholder="Unique NGO ID (e.g. NGO123)" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
+        <input type="text" name="sec_code" placeholder="Create Security Code for Volunteers" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
+        <input type="text" name="pincode" placeholder="Headquarters Pincode" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
+        <textarea name="address" placeholder="Full NGO Address" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required></textarea>
+        <button type="submit" class="w-full bg-yellow-400 py-3 rounded-lg font-bold hover:bg-yellow-500 transition border border-black/60">Register Organization</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-md mx-auto bg-black/2  border-t-2 border-b-2 border-r-2 border-l-2 rounded-xl border-black/80 p-8 my-10">
+    <h2 class="text-2xl font-bold mb-6 text-center">Login to ResQFood</h2>
+    <form method="POST" class="space-y-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="border border-black/20 w-full bg-green-500 py-3 rounded-lg font-bold hover:bg-green-600 transition mt-4">Login</button>
+    </form>
+    <p class="mt-4 text-center text-sm opacity-100">Don't have an account? <a href="{% url 'register_select' %}" class="underline">Register here</a></p>
+</div>
+<style>
+    input { width: 100%; padding: 12px; background: rgba(131, 122, 122, 0.1); border: 1px solid rgba(10, 7, 7, 0.2); border-radius: 8px; color: black; margin-bottom: 10px; }
+</style>
+{% endblock %}

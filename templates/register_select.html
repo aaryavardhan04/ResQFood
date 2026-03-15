@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-4xl mx-auto py-12 text-center">
+    <h2 class="text-4xl font-bold mb-4">Join the ResQFood Mission</h2>
+    <p class="mb-10 opacity-80 text-lg">Choose how you want to contribute to reducing food waste.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <div class=" p-8 bg-white/10  border-t-4 border-b-4 border-r-4 border-l-4 rounded-xl border-green-500">
+            <h3 class="text-2xl font-semibold mb-4 text-black">I want to Donate</h3>
+            <div class="space-y-4">
+                <a href="{% url 'register_form' 'restaurant' %}" class="block w-full p-4 border border-black/80 rounded-xl bg-green-400 hover:bg-green-500 transition ">Restaurant / Business</a>
+                <a href="{% url 'register_form' 'individual_donor' %}" class="block w-full p-4 border border-black/80 rounded-xl  bg-green-400 hover:bg-green-500 transition">Individual Person</a>
+            </div>
+        </div>
+
+        <div class=" p-8 bg-white/10  border-t-4 border-b-4 border-r-4 border-l-4 rounded-xl border-purple-500">
+            <h3 class="text-2xl font-semibold mb-4 text-black">I want to Volunteer</h3>
+            <div class="space-y-4">
+                <a href="{% url 'register_form' 'ngo_volunteer' %}" class="block w-full p-4 border border-black/80 rounded-xl  bg-purple-400 hover:bg-purple-500 transition">NGO Volunteer</a>
+                <a href="{% url 'register_form' 'individual_volunteer' %}" class="block w-full p-4 border border-black/80 rounded-xl  bg-purple-400 hover:bg-purple-500 transition">Individual Volunteer</a>
+            </div>
+        </div>
+    </div>
+
+    <div class=" p-8 bg-white/10  border-t-4 border-b-4 border-r-4 border-l-4 rounded-xl border-black/80 max-w-2xl mx-auto">
+        <h3 class="text-xl font-bold mb-2">Represent an NGO?</h3>
+        <p class="mb-6 opacity-80">If your NGO isn't on our platform yet, register your organization first so your volunteers can join using your unique ID.</p>
+        <a href="{% url 'register_ngo_org' %}" class="border border-black/60 bg-yellow-400 hover:bg-yellow-500 px-8 py-3 rounded-xl font-bold transition inline-block">
+            Register My NGO Organization
+        </a>
+    </div>
+</div>
+{% endblock %}

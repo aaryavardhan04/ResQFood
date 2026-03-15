@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-lg mx-auto  p-8 bg-white/10  border-t-2 border-b-2 border-r-2 border-l-2 rounded-xl border-black my-10">
+    <h2 class="text-2xl font-bold mb-6 text-center">List Surplus Food</h2>
+    <form method="POST" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        <input type="text" name="food_name" placeholder="Food Name (e.g., Dal & Rice)" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
+        <input type="number" name="quantity" placeholder="Servings (Number of people)" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
+        <input type="text" name="pincode" placeholder="Pickup Pincode" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
+        <div class="flex items-center gap-4 p-3 bg-white/60 border border-black/60 rounded-lg">
+            <label class="text-sm opacity-70">Food Image:</label>
+            <input type="file" name="image" accept="image/*" required>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="checkbox" name="preservation" id="pres">
+            <label for="pres" class="text-sm">Requires Refrigeration?</label>
+        </div>
+        <button type="submit" class="w-full bg-green-500 py-3 rounded-lg font-bold hover:bg-green-600 transition">Post Listing</button>
+    </form>
+</div>
+{% endblock %}

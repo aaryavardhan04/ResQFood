@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResQFood | Feed the Future</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;850&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header id="main-header">
+        <h1 id="logo">ResQFood</h1>
+        <div id="search-container">
+            <input type="text" id="pincode-input" placeholder="Type your pincode..." maxlength="6">
+        </div>
+        
+        {% if user.is_authenticated %}
+            <div id="user-pill" style="position: absolute; top: 30px; right: 40px; background: white; padding: 8px 18px; border-radius: 50px; box-shadow: var(--shadow); font-weight: 600; z-index: 101;">
+                👋 {{ user.username }} | <span onclick="handleLogout()" style="color: #ff4757; cursor: pointer; margin-left: 10px;">Logout</span>
+            </div>
+        {% endif %}
+    </header>
+
+    <main id="content-area" class="hidden">
+        <h2 style="margin-bottom: 2rem; font-weight: 800;">Available Near You</h2>
+        <div id="food-grid"></div>
+    </main>
+
+    <button id="add-btn" onclick="openAuthModal()">Login</button>
+
+<div id="auth-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeAuthModal()">&times;</span>
+        
+        <h2 id="auth-title">Join the Movement</h2>
+        <p id="auth-subtitle" style="color: var(--text-sub); margin-bottom: 2rem;">Please fill in your details to continue.</p>
+
+        <div class="form-group">
+            
+            <div id="signup-only">
+                <select id="auth-role" onchange="updateIdLabel()">
+                    <option value="IND_DONOR">Individual Donor</option>
+                    <option value="RESTAURANT">Restaurant / Hotel</option>
+                    <option value="NGO">NGO Volunteer</option>
+                </select>
+                <input type="text" id="auth-user" placeholder="Username" required>
+                <input type="text" id="auth-id" placeholder="Aadhar Number">
+            </div>
+
+            <input type="password" id="auth-pass" placeholder="Password" required>
+        </div>
+
+        <button class="submit-btn" id="auth-submit" onclick="handleAuth()">Create Account</button>
+
+        <p id="auth-toggle" onclick="toggleAuthMode()">
+            Already a member? <span style="color: var(--primary);">Login</span>
+        </p>
+    </div>
+</div>
+
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 style="font-weight: 800; margin-bottom: 1.5rem;">Share Surplus Food</h3>
+            <div class="form-group">
+                <input type="text" id="new-food-name" placeholder="What food is available?">
+                <input type="text" id="new-food-qty" placeholder="Quantity (e.g., 5kg or 10 plates)">
+                <input type="text" id="new-food-pin" placeholder="Collection Pincode">
+            </div>
+            <button class="submit-btn" onclick="submitFood()">Post Listing</button>
+            <button class="cancel-btn" onclick="toggleModal()" style="margin-top: 1rem; border: none; background: none; color: var(--text-sub); font-weight: 600; cursor: pointer;">Go back</button>
+        </div>
+    </div>
+
+    <section id="contact-section" style="padding: 100px 8%; background: white; margin-top: 50px;">
+        <div style="max-width: 600px; margin: 0 auto; text-align: center;">
+            <h2 style="font-weight: 850; margin-bottom: 1rem;">Get Verified</h2>
+            <p style="color: var(--text-sub); margin-bottom: 2.5rem;">Are you an NGO? Contact us to verify your account and start receiving food alerts via email.</p>
+            
+            <form id="contact-form" onsubmit="handleContact(event)" class="form-group">
+                <input type="text" id="contact-name" placeholder="NGO Name" required style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 1px solid #E2E8F0; border-radius: 14px;">
+                <input type="email" id="contact-email" placeholder="Official Email" required style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 1px solid #E2E8F0; border-radius: 14px;">
+                <textarea id="contact-msg" placeholder="Tell us about your organization..." style="width: 100%; padding: 1rem; border-radius: 14px; border: 1px solid #E2E8F0; background: #F8FAFC; margin-bottom: 1rem; height: 120px; font-family: inherit;"></textarea>
+                <button type="submit" class="submit-btn">Send Verification Request</button>
+            </form>
+        </div>
+    </section>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white/10  border-t-4 border-b-4 border-r-4 border-l-4 rounded-xl border-black/60 p-8 my-10">
+    <h2 class="text-2xl font-bold mb-2 text-center">Individual Volunteer</h2>
+    <p class="text-center text-sm opacity-70 mb-6">Help us transport food to those in need</p>
+    <form method="POST" class="space-y-4">
+        {% csrf_token %}
+        <input type="email" name="email" placeholder="Email Address" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
+        <input type="password" name="password" placeholder="Password" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
+        <input type="text" name="phone" placeholder="Phone Number" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
+        <input type="text" name="aadhaar" placeholder="Aadhaar Number (12 Digits)" pattern="\d{12}" title="Please enter exactly 12 digits" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
+        <input type="text" name="pincode" placeholder="Pincode" class="w-full p-3 color-black bg-white/60 border border-black/60 rounded-lg outline-none" required>
+        <button type="submit" class="w-full bg-purple-400 py-3 rounded-lg font-bold hover:bg-purple-500 transition border border-black/60">Register as Volunteer</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="text-center py-12">
+    <h1  class="text-5xl font-bold mb-4">Minimize Waste, Maximize <span class="text-green-400 hover:bg-green transition ">Taste</span>.</h1>
+    <p class="text-xl opacity-80 mb-8">Connecting surplus food with those who need it most.</p>
+
+    <div class="max-w-2xl mx-auto bg-black/5  border-t-2 border-b-2 border-r-2 border-l-2 rounded-xl border-black/80 p-2 flex items-center mb-12">
+        <form action="{% url 'home' %}" method="GET" class="w-full flex">
+            <input type="text" name="pincode" placeholder="Enter Pincodes (e.g. 400001, 400002)" 
+                   class="w-full p-4 bg-transparent outline-none text-black placeholder-black/60 px-8 py-3 rounded-xl">
+            <button type="submit" class="bg-green-400 px-8 py-3 rounded-xl font-semibold hover:bg-green-600 transition">
+                Search
+            </button>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {% for food in listings %}
+        <div class="bg-black/5  border-t-2 border-b-2 border-r-2 border-l-2 rounded-xl border-black/80 overflow-hidden transition transform hover:scale-105">
+            <img src="{{ food.image.url }}" class="w-full h-48 object-cover" alt="{{ food.food_name }}">
+            <div class="p-6 text-left">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-xl font-bold">{{ food.food_name }}</h3>
+                    <span class="bg-green-300 text-black text-xs px-2 py-1 rounded">Available</span>
+                </div>
+                <p class="text-sm opacity-70">Quantity: Serves {{ food.quantity }}</p>
+                <p class="text-sm opacity-70">Pincode: {{ food.pincode }}</p>
+                <div class="mt-4 flex justify-between items-center">
+                    {% if food.preservation_required %}
+                        <span class="text-xs text-blue-400">❄️ Refrigation Required</span>
+                    {% else %}
+                        <span class="text-xs text-orange-400">♨️ No Cooling Needed</span>
+                    {% endif %}
+                    
+                    {% if user.is_authenticated %}
+                        {% if user.role == 'NGO_VOLUNTEER' or user.role == 'INDIVIDUAL_VOLUNTEER' %}
+                            <a href="{% url 'claim_food' food.id %}" class="bg-black/20 hover:bg-white/50 px-4 py-2 rounded-lg text-sm transition">Claim Now</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-sm text-white underline bg-black/40 px-2 py-1 rounded-lg text-sm transition">Login to claim</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-3 py-10 opacity-50">
+            <p class="text-2xl">No food listings found for this location.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% if user.role == 'RESTAURANT' or user.role == 'INDIVIDUAL_DONOR' %}
+    <a href="{% url 'list_food' %}" class="fixed bottom-10 right-10 bg-green-400 hover:bg-green500 w-16 h-16 rounded-full flex items-center justify-center text-4xl shadow-2xl hover:bg-green-500 transition">
+        +
+    </a>
+{% endif %}
+{% endblock %}
