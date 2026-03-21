@@ -1,13 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="max-w-lg mx-auto  p-8 bg-white/10  border-t-2 border-b-2 border-r-2 border-l-2 rounded-xl border-black my-10">
+<div class="max-w-lg mx-auto p-8 bg-white/10 dark:bg-gray-800/50 border-t-2 border-b-2 border-r-2 border-l-2 rounded-xl border-black dark:border-white/50 my-10 text-black dark:text-white">
     <h2 class="text-2xl font-bold mb-6 text-center">List Surplus Food</h2>
     <form method="POST" enctype="multipart/form-data" class="space-y-4">
         {% csrf_token %}
-        <input type="text" name="food_name" placeholder="Food Name (e.g., Dal & Rice)" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
-        <input type="number" name="quantity" placeholder="Servings (Number of people)" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
-        <input type="text" name="pincode" placeholder="Pickup Pincode" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
-        <div class="flex items-center gap-4 p-3 bg-white/60 border border-black/60 rounded-lg">
+        <input type="text" name="food_name" placeholder="Food Name (e.g., Dal & Rice)" class="w-full p-3 bg-white/60 dark:bg-gray-700 border border-black/60 dark:border-gray-600 rounded-lg outline-none dark:text-white dark:placeholder-gray-400" required>
+        <input type="number" name="quantity" placeholder="Servings (Number of people)" class="w-full p-3 bg-white/60 dark:bg-gray-700 border border-black/60 dark:border-gray-600 rounded-lg outline-none dark:text-white dark:placeholder-gray-400" required>
+        
+        <div class="flex justify-between items-end pt-2">
+            <label class="text-sm font-semibold opacity-80 px-1">Pickup Location Details:</label>
+            <button type="button" onclick="fillDefaultLocation()" class="text-xs bg-black/80 dark:bg-white/20 hover:bg-black dark:hover:bg-white/30 text-white px-3 py-1.5 rounded-lg transition shadow-sm">
+                Use My Default Address
+            </button>
+        </div>
+        <div class="space-y-1">
+            <textarea id="address_input" name="address" placeholder="Enter Pickup Address" class="w-full p-3 bg-white/60 dark:bg-gray-700 border border-black/60 dark:border-gray-600 rounded-lg outline-none dark:text-white dark:placeholder-gray-400" rows="2" required></textarea>
+        </div>
+        <div class="space-y-1">
+            <input type="text" id="pincode_input" name="pincode" placeholder="Enter Pickup Pincode" class="w-full p-3 bg-white/60 dark:bg-gray-700 border border-black/60 dark:border-gray-600 rounded-lg outline-none dark:text-white dark:placeholder-gray-400" required>
+        </div>
+
+        <div class="flex items-center gap-4 p-3 bg-white/60 dark:bg-gray-700 border border-black/60 dark:border-gray-600 rounded-lg">
             <label class="text-sm opacity-70">Food Image:</label>
             <input type="file" name="image" accept="image/*" required>
         </div>
@@ -18,4 +31,11 @@
         <button type="submit" class="w-full bg-green-500 py-3 rounded-lg font-bold hover:bg-green-600 transition">Post Listing</button>
     </form>
 </div>
+
+<script>
+    function fillDefaultLocation() {
+        document.getElementById('address_input').value = "{{ user.address|escapejs }}";
+        document.getElementById('pincode_input').value = "{{ user.pincode|escapejs }}";
+    }
+</script>
 {% endblock %}

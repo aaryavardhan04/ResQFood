@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="text-center py-12">
-    <h1  class="text-5xl font-bold mb-4">Minimize Waste, Maximize <span class="text-green-400 hover:bg-green transition ">Taste</span>.</h1>
-    <p class="text-xl opacity-80 mb-8">Connecting surplus food with those who need it most.</p>
+<div class="text-center py-12 dark:text-white">
+    <h1  class="text-5xl font-bold mb-4">Minimize Waste, Maximize <span class="text-green-400 hover:text-green-500 transition ">Taste</span>.</h1>
+    <p class="text-xl opacity-80 mb-8 dark:text-gray-300">Connecting surplus food with those who need it most.</p>
 
-    <div class="max-w-2xl mx-auto bg-black/5  border-t-2 border-b-2 border-r-2 border-l-2 rounded-xl border-black/80 p-2 flex items-center mb-12">
+    <div class="max-w-2xl mx-auto bg-black/5 dark:bg-white/5 border-t-2 border-b-2 border-r-2 border-l-2 rounded-xl border-black/80 dark:border-white/80 p-2 flex items-center mb-12">
         <form action="{% url 'home' %}" method="GET" class="w-full flex">
             <input type="text" name="pincode" placeholder="Enter Pincodes (e.g. 400001, 400002)" 
-                   class="w-full p-4 bg-transparent outline-none text-black placeholder-black/60 px-8 py-3 rounded-xl">
+                   class="w-full p-4 bg-transparent outline-none text-black dark:text-white placeholder-black/60 dark:placeholder-white/60 px-8 py-3 rounded-xl">
             <button type="submit" class="bg-green-400 px-8 py-3 rounded-xl font-semibold hover:bg-green-600 transition">
                 Search
             </button>
@@ -17,16 +17,20 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {% for food in listings %}
-        <div class="bg-black/5  border-t-2 border-b-2 border-r-2 border-l-2 rounded-xl border-black/80 overflow-hidden transition transform hover:scale-105">
+        <div class="bg-black/5 dark:bg-white/5 border-t-2 border-b-2 border-r-2 border-l-2 rounded-xl border-black/80 dark:border-white/80 overflow-hidden transition transform hover:scale-105 cursor-pointer flex flex-col text-black dark:text-white" onclick="openModal('modal-{{ food.id }}')">
             <img src="{{ food.image.url }}" class="w-full h-48 object-cover" alt="{{ food.food_name }}">
             <div class="p-6 text-left">
                 <div class="flex justify-between items-start mb-2">
                     <h3 class="text-xl font-bold">{{ food.food_name }}</h3>
                     <span class="bg-green-300 text-black text-xs px-2 py-1 rounded">Available</span>
                 </div>
+                <p class="text-sm opacity-70"><strong>Uploaded By:</strong> {{ food.donor_name|default:"Generous Donor" }}</p>
                 <p class="text-sm opacity-70">Quantity: Serves {{ food.quantity }}</p>
+                <p class="text-sm opacity-70">Address: {{ food.address }}</p>
                 <p class="text-sm opacity-70">Pincode: {{ food.pincode }}</p>
-                <div class="mt-4 flex justify-between items-center">
+                <p class="text-sm opacity-70 mt-2"><strong>Listed At:</strong> {{ food.upload_time }}</p>
+                <p class="text-sm opacity-70"><strong>Time Left:</strong> <span class="{{ food.time_color_class }} font-semibold">{{ food.time_left }}</span></p>
+                <div class="mt-4 flex justify-between items-center" onclick="event.stopPropagation()">
                     {% if food.preservation_required %}
                         <span class="text-xs text-blue-400">❄️ Refrigation Required</span>
                     {% else %}
@@ -35,16 +39,59 @@
                     
                     {% if user.is_authenticated %}
                         {% if user.role == 'NGO_VOLUNTEER' or user.role == 'INDIVIDUAL_VOLUNTEER' %}
-                            <a href="{% url 'claim_food' food.id %}" class="bg-black/20 hover:bg-white/50 px-4 py-2 rounded-lg text-sm transition">Claim Now</a>
+                            <a href="{% url 'claim_food' food.id %}" class="bg-black/20 dark:bg-white/20 hover:bg-black/30 dark:hover:bg-white/30 px-4 py-2 rounded-lg text-sm transition">Claim Now</a>
                         {% endif %}
                     {% else %}
-                        <a href="{% url 'login' %}" class="text-sm text-white underline bg-black/40 px-2 py-1 rounded-lg text-sm transition">Login to claim</a>
+                        <a href="{% url 'login' %}" class="text-sm text-white dark:text-gray-200 underline bg-black/40 dark:bg-white/20 px-2 py-1 rounded-lg text-sm transition">Login to claim</a>
                     {% endif %}
                 </div>
             </div>
         </div>
+
+        <!-- Modal Pop-Up for {{ food.food_name }} -->
+        <div id="modal-{{ food.id }}" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeModal('modal-{{ food.id }}')">
+            <div class="bg-white dark:bg-gray-800 text-black dark:text-white p-8 rounded-2xl max-w-4xl w-full flex flex-col md:flex-row gap-10 transform transition-all shadow-2xl" onclick="event.stopPropagation()">
+                <div class="w-full md:w-5/12">
+                    <img src="{{ food.image.url }}" class="w-full h-64 md:h-full object-cover rounded-xl shadow-sm" alt="{{ food.food_name }}">
+                </div>
+                <div class="w-full md:w-7/12 flex flex-col justify-between text-left">
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <h3 class="text-3xl font-bold text-gray-900 dark:text-white">{{ food.food_name }}</h3>
+                                <div class="mt-3 flex gap-2">
+                                    {% if food.preservation_required %}
+                                        <span class="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs px-3 py-1 rounded-full border border-blue-200 dark:border-blue-800 font-medium">❄️ Refrigation Required</span>
+                                    {% else %}
+                                        <span class="bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 text-xs px-3 py-1 rounded-full border border-orange-200 dark:border-orange-800 font-medium">♨️ No Cooling Needed</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <button onclick="closeModal('modal-{{ food.id }}')" class="text-4xl leading-none font-light text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition">&times;</button>
+                        </div>
+                        <div class="space-y-4 mt-6 border-t border-gray-100 dark:border-gray-700 pt-6">
+                            <div class="flex items-start"><span class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider mt-1">Uploaded By</span><span class="flex-1 text-gray-900 dark:text-white text-lg">{{ food.donor_name|default:"Generous Donor" }}</span></div>
+                            <div class="flex items-start"><span class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider mt-1">Quantity</span><span class="flex-1 text-gray-900 dark:text-white text-lg">Serves {{ food.quantity }}</span></div>
+                            <div class="flex items-start"><span class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider mt-1">Address</span><span class="flex-1 text-gray-900 dark:text-white text-lg">{{ food.address }} ({{ food.pincode }})</span></div>
+                            <div class="flex items-start"><span class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider mt-1">Listed At</span><span class="flex-1 text-gray-900 dark:text-white text-lg">{{ food.upload_time }}</span></div>
+                            <div class="flex items-start"><span class="w-32 text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider mt-1">Time Left</span><span class="flex-1 {{ food.time_color_class }} font-bold text-xl">{{ food.time_left }}</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-10 flex justify-start w-full">
+                        {% if user.is_authenticated %}
+                            {% if user.role == 'NGO_VOLUNTEER' or user.role == 'INDIVIDUAL_VOLUNTEER' %}
+                                <a href="{% url 'claim_food' food.id %}" class="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-xl font-bold transition text-center shadow-lg w-full md:w-auto">Claim Food Now</a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'login' %}" class="bg-gray-900 dark:bg-gray-700 hover:bg-black dark:hover:bg-gray-600 text-white px-8 py-3 rounded-xl font-bold transition text-center shadow-lg w-full md:w-auto">Login to claim</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
         {% empty %}
-        <div class="col-span-3 py-10 opacity-50">
+        <div class="col-span-3 py-10 opacity-50 dark:opacity-70 dark:text-gray-300">
             <p class="text-2xl">No food listings found for this location.</p>
         </div>
         {% endfor %}
@@ -56,4 +103,15 @@
         +
     </a>
 {% endif %}
+
+<script>
+    function openModal(id) {
+        document.getElementById(id).classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // Prevents background from scrolling while popup is open
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+        document.body.style.overflow = 'auto'; // Restores scrolling
+    }
+</script>
 {% endblock %}

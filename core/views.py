@@ -1,13 +1,19 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
+from django.core.mail import send_mail
 from django.contrib import messages
 from .models import User, FoodListing, NGO
 from django.db.models import Q
+from django.utils import timezone
+from datetime import timedelta
 
 def home(request):
     query = request.GET.get('pincode')
-    listings = FoodListing.objects.filter(status='Available')
+    # Only fetch food listings that are Available AND uploaded within the last 3 hours
+    time_threshold = timezone.now() - timedelta(hours=3)
+    listings = FoodListing.objects.filter(status='Available', created_at__gte=time_threshold)
+    
     if query:
         pincode_list = [p.strip() for p in query.split(',')]
         listings = listings.filter(pincode__in=pincode_list)
@@ -55,6 +61,7 @@ def register_form(request, role_type):
                 username=data['email'],
                 email=data['email'],
                 password=data['password'],
+                name=data.get('name', ''),
                 role=role_type.upper(),
                 phone=data['phone'],
                 address=data.get('address', ''),
@@ -107,11 +114,13 @@ def list_food(request):
     if request.method == 'POST':
         FoodListing.objects.create(
             donor=request.user,
+            donor_name=request.user.name or request.user.username,
             food_name=request.POST['food_name'],
             quantity=request.POST['quantity'],
             image=request.FILES['image'],
             preservation_required='preservation' in request.POST,
-            pincode=request.POST['pincode']
+            address=request.POST.get('address') or request.user.address,
+            pincode=request.POST.get('pincode') or request.user.pincode
         )
         return redirect('dashboard')
     return render(request, 'list_food.html')
@@ -125,6 +134,11 @@ def claim_food(request, food_id):
         messages.error(request, "Access Restricted: Your NGO is not yet verified by Admin.")
         return redirect('home')
     
+    # Check if expired
+    if food.is_expired:
+        messages.error(request, "This food listing has expired and cannot be claimed.")
+        return redirect('home')
+
     # Claiming logic
     if food.status == 'Available':
         food.status = 'Claimed'
@@ -136,10 +150,55 @@ def claim_food(request, food_id):
 def verify_otp(request, food_id):
     food = get_object_or_404(FoodListing, id=food_id)
     if request.method == 'POST':
-        if food.otp == request.POST.get('otp'):
+        if food.is_expired:
+            messages.error(request, "This claim has expired because the time limit exceeded.")
+        elif food.otp == request.POST.get('otp'):
             food.status = 'Verified'
             food.save()
             messages.success(request, "Verification Successful!")
         else:
             messages.error(request, "Invalid OTP!")
+    return redirect('dashboard')
+
+def cancel_claim(request, food_id):
+    food = get_object_or_404(FoodListing, id=food_id)
+    
+    if request.method == 'POST':
+        # Ensure the volunteer who claimed it or the donor can cancel it
+        if (request.user == food.claimed_by or request.user == food.donor) and food.status == 'Claimed':
+            food.status = 'Available'
+            food.claimed_by = None
+            food.otp = None
+            food.save()
+            
+            # Re-notify verified NGO volunteers in the same pincode
+            volunteers = User.objects.filter(
+                role='NGO_VOLUNTEER',
+                pincode=food.pincode,
+                is_verified_ngo=True
+            ).values_list('email', flat=True)
+            
+            if volunteers:
+                subject = f"🚨 Food Re-listed in {food.pincode}!"
+                message = (
+                    f"Hi! {food.food_name} is available again (Serves {food.quantity}).\n"
+                    f"Location: {food.pincode}\n"
+                    f"Log in to ResQFood to claim it!"
+                )
+                send_mail(subject, message, 'notifications@resqfood.org', list(volunteers))
+                
+            messages.success(request, "Claim cancelled successfully. The food is now available for others.")
+        else:
+            messages.error(request, "You cannot cancel this claim.")
+            
+    return redirect('dashboard')
+
+def delete_listing(request, food_id):
+    food = get_object_or_404(FoodListing, id=food_id)
+    if request.method == 'POST':
+        if request.user == food.donor:
+            food.delete()
+            messages.success(request, "Food listing removed successfully.")
+        else:
+            messages.error(request, "You are not authorized to delete this listing.")
     return redirect('dashboard')

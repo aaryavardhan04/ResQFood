@@ -5,6 +5,7 @@
     <p class="text-center text-sm opacity-100 mb-6">Create an organization profile for your volunteers</p>
     <form method="POST" class="space-y-4">
         {% csrf_token %}
+        <input type="text" name="name" placeholder="Full Name or Organization Name" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
         <input type="text" name="name" placeholder="NGO Name" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
         <input type="text" name="ngo_id" placeholder="Unique NGO ID (e.g. NGO123)" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
         <input type="text" name="sec_code" placeholder="Create Security Code for Volunteers" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>

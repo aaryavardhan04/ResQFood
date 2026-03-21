@@ -1,16 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="max-w-md mx-auto bg-white/10  border-t-4 border-b-4 border-r-4 border-l-4 rounded-xl border-black/60 p-8 my-10">
+<div class="max-w-md mx-auto bg-white/10 dark:bg-gray-800/50 border-t-4 border-b-4 border-r-4 border-l-4 rounded-xl border-black/60 dark:border-white/50 p-8 my-10 text-black dark:text-white">
     <h2 class="text-2xl font-bold mb-6 text-center">Restaurant Registration</h2>
     <form method="POST" class="space-y-4">
         {% csrf_token %}
-        <input type="email" name="email" placeholder="Email Address" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
-        <input type="password" name="password" placeholder="Password" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
-        <input type="text" name="phone" placeholder="Phone Number" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
-        <input type="text" name="fssai" placeholder="FSSAI License Number" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
-        <input type="text" name="pincode" placeholder="Pincode" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required>
-        <textarea name="address" placeholder="Full Address" class="w-full p-3 bg-white/60 border border-black/60 rounded-lg outline-none" required></textarea>
-        <button type="submit" class="w-full bg-green-500 py-3 rounded-lg font-bold hover:bg-green-600 transition border border-black/60">Register Restaurant</button>
+        <input type="text" name="name" placeholder="Full Name or Organization Name" class="w-full p-3 bg-white/60 dark:bg-gray-700 border border-black/60 dark:border-gray-600 rounded-lg outline-none dark:text-white dark:placeholder-gray-400" required>
+        <input type="email" name="email" placeholder="Email Address" class="w-full p-3 bg-white/60 dark:bg-gray-700 border border-black/60 dark:border-gray-600 rounded-lg outline-none dark:text-white dark:placeholder-gray-400" required>
+        <input type="password" name="password" placeholder="Password" class="w-full p-3 bg-white/60 dark:bg-gray-700 border border-black/60 dark:border-gray-600 rounded-lg outline-none dark:text-white dark:placeholder-gray-400" required>
+        <input type="text" name="phone" placeholder="Phone Number" class="w-full p-3 bg-white/60 dark:bg-gray-700 border border-black/60 dark:border-gray-600 rounded-lg outline-none dark:text-white dark:placeholder-gray-400" required>
+        <input type="text" name="fssai" placeholder="FSSAI License Number" class="w-full p-3 bg-white/60 dark:bg-gray-700 border border-black/60 dark:border-gray-600 rounded-lg outline-none dark:text-white dark:placeholder-gray-400" required>
+        <input type="text" name="pincode" placeholder="Pincode" class="w-full p-3 bg-white/60 dark:bg-gray-700 border border-black/60 dark:border-gray-600 rounded-lg outline-none dark:text-white dark:placeholder-gray-400" required>
+        <textarea name="address" placeholder="Full Address" class="w-full p-3 bg-white/60 dark:bg-gray-700 border border-black/60 dark:border-gray-600 rounded-lg outline-none dark:text-white dark:placeholder-gray-400" required></textarea>
+        <button type="submit" class="w-full bg-green-500 py-3 rounded-lg font-bold hover:bg-green-600 transition border border-black/60 dark:border-gray-600">Register Restaurant</button>
     </form>
 </div>
 {% endblock %}

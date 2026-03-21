@@ -15,6 +15,8 @@ urlpatterns = [
     path('list-food/', views.list_food, name='list_food'),
     path('claim-food/<int:food_id>/', views.claim_food, name='claim_food'),
     path('verify-otp/<int:food_id>/', views.verify_otp, name='verify_otp'),
+    path('cancel-claim/<int:food_id>/', views.cancel_claim, name='cancel_claim'),
+    path('delete-listing/<int:food_id>/', views.delete_listing, name='delete_listing'),
     path('dashboard/', views.dashboard, name='dashboard'),
 ]
 

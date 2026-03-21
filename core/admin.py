@@ -8,7 +8,11 @@ class CustomUserAdmin(UserAdmin):
     list_display = ['username', 'email', 'role', 'pincode', 'is_verified_ngo']
     list_filter = ['role', 'is_verified_ngo', 'pincode']
     
-    fieldsets = UserAdmin.fieldsets + (
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        ('Personal info', {'fields': ('name', 'email')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('date_joined',)}),
         ('ResQFood Profile', {
             'fields': (
                 'role', 'phone', 'pincode', 'address', 
@@ -28,9 +32,13 @@ class NGOAdmin(admin.ModelAdmin):
     list_editable = ['is_verified'] 
 
 class FoodListingAdmin(admin.ModelAdmin):
-    list_display = ['food_name', 'donor', 'pincode', 'status', 'created_at']
+    list_display = ['food_name', 'donor', 'donor_name', 'address', 'pincode', 'status', 'get_claimed_by', 'upload_time', 'time_left']
     list_filter = ['status', 'pincode']
     search_fields = ['food_name', 'pincode']
+
+    def get_claimed_by(self, obj):
+        return obj.claimed_by.username if obj.claimed_by else "Not Claimed"
+    get_claimed_by.short_description = "Claimed By"
 
 # Registering models with their custom Admin classes
 admin.site.register(User, CustomUserAdmin)
